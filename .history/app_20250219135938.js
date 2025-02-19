@@ -184,7 +184,7 @@ app.post('/actualizar-competicion', (req, res) => {
     res.redirect('/gestion');
   });
 });
-app.post('/eliminar-tarea', (req, res) => {
+app.post('/elimar-tarea', (req, res) => {
   const { id } = req.body;
   db.run('DELETE FROM tareas WHERE id = ?', [id], (err) => {
     if (err) {
@@ -193,7 +193,7 @@ app.post('/eliminar-tarea', (req, res) => {
     res.redirect('/gestion');
   });
 });
-app.post('/eliminar-trabajo', (req, res) => {
+app.post('/elimar-trabajo', (req, res) => {
   const { id } = req.body;
   db.run('DELETE FROM trabajos WHERE id = ?', [id], (err) => {
     if (err) {
@@ -202,7 +202,7 @@ app.post('/eliminar-trabajo', (req, res) => {
     res.redirect('/gestion');
   });
 });
-app.post('/eliminar-competicion', (req, res) => {
+app.post('/elimar-competicion', (req, res) => {
   const { id } = req.body;
   db.run('DELETE FROM competiciones WHERE id = ?', [id], (err) => {
     if (err) {

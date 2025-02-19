@@ -137,7 +137,7 @@ app.post('/agregar-competicion', (req, res) => {
   });
 });
 
-// VARIABLES DE GESTION
+
 app.get('/gestion', (req, res) => {
   db.all('SELECT * FROM tareas', [], (err, tareas) => {
     if (err) {
@@ -175,7 +175,7 @@ app.post('/actualizar-trabajo', (req, res) => {
     res.redirect('/gestion');
   });
 });
-app.post('/actualizar-competicion', (req, res) => {
+app.post('/actualizar-trabajo', (req, res) => {
   const { id, descripcion, fechaInicio, fechaFin } = req.body;
   db.run('UPDATE competiciones SET descripcion = ?, fechaInicio = ?, fechaFin = ? WHERE id = ?', [descripcion, fechaInicio, fechaFin, id], (err) => {
     if (err) {
@@ -184,35 +184,6 @@ app.post('/actualizar-competicion', (req, res) => {
     res.redirect('/gestion');
   });
 });
-app.post('/eliminar-tarea', (req, res) => {
-  const { id } = req.body;
-  db.run('DELETE FROM tareas WHERE id = ?', [id], (err) => {
-    if (err) {
-      throw err;
-    }
-    res.redirect('/gestion');
-  });
-});
-app.post('/eliminar-trabajo', (req, res) => {
-  const { id } = req.body;
-  db.run('DELETE FROM trabajos WHERE id = ?', [id], (err) => {
-    if (err) {
-      throw err;
-    }
-    res.redirect('/gestion');
-  });
-});
-app.post('/eliminar-competicion', (req, res) => {
-  const { id } = req.body;
-  db.run('DELETE FROM competiciones WHERE id = ?', [id], (err) => {
-    if (err) {
-      throw err;
-    }
-    res.redirect('/gestion');
-  });
-});
-
-
 
 function contarDiasTrabajo(diasTrabajo, mes, año) {
   const dias = diasTrabajo.split(',').map(d => d.trim().toLowerCase());
