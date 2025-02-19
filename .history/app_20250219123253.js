@@ -8,7 +8,6 @@ const db = new sqlite3.Database(dbPath);
 
 // Configuración del middleware
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public'))); // Servir archivos estáticos
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -64,7 +63,7 @@ app.get('/', (req, res) => {
           throw err;
         }
 
-        // Calcular las ganancias por trabajo y filtrar trabajos sin días de trabajo en el mes seleccionado
+        // Calcular las ganancias por trabajo
         const gananciasTrabajos = trabajos.map(trabajo => {
           const diasTrabajo = trabajo.diasTrabajo.split(',').map(d => d.trim().toLowerCase());
           const diasSemana = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
@@ -99,10 +98,10 @@ app.get('/', (req, res) => {
             totalMes,
             totalDia: totalDia.toFixed(2) // Formatear a dos decimales
           };
-        }).filter(ganancia => ganancia.diasPorMes > 0); // Filtrar trabajos sin días de trabajo en el mes seleccionado
+        });
 
         res.render('index', { tareas, trabajos, competiciones, mesSeleccionado, añoSeleccionado, gananciasTrabajos });
-        });
+      });
     });
   });
 });
@@ -134,26 +133,6 @@ app.post('/agregar-competicion', (req, res) => {
       throw err;
     }
     res.redirect('/');
-  });
-});
-
-
-app.get('/gestion', (req, res) => {
-  db.all('SELECT * FROM tareas', [], (err, tareas) => {
-    if (err) {
-      throw err;
-    }
-    db.all('SELECT * FROM trabajos', [], (err, trabajos) => {
-      if (err) {
-        throw err;
-      }
-      db.all('SELECT * FROM competiciones', [], (err, competiciones) => {
-        if (err) {
-          throw err;
-        }
-        res.render('gestion', { tareas, trabajos, competiciones });
-      });
-    });
   });
 });
 

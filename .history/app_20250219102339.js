@@ -8,7 +8,6 @@ const db = new sqlite3.Database(dbPath);
 
 // Configuración del middleware
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public'))); // Servir archivos estáticos
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -28,9 +27,7 @@ db.serialize(() => {
       descripcion TEXT NOT NULL,
       diasTrabajo TEXT NOT NULL,
       pago REAL NOT NULL,
-      frecuenciaPago TEXT NOT NULL,
-      fechaInicio DATE,
-      fechaFin DATE
+      frecuenciaPago TEXT NOT NULL
     )
   `);
 
@@ -64,7 +61,7 @@ app.get('/', (req, res) => {
           throw err;
         }
 
-        // Calcular las ganancias por trabajo y filtrar trabajos sin días de trabajo en el mes seleccionado
+        // Calcular las ganancias por trabajo
         const gananciasTrabajos = trabajos.map(trabajo => {
           const diasTrabajo = trabajo.diasTrabajo.split(',').map(d => d.trim().toLowerCase());
           const diasSemana = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
@@ -83,8 +80,7 @@ app.get('/', (req, res) => {
                 }
               });
 
-              const trabajoDentroDelRango = (!trabajo.fechaInicio || dia >= new Date(trabajo.fechaInicio)) && (!trabajo.fechaFin || dia <= new Date(trabajo.fechaFin));
-              if (!trabajoTachado && trabajoDentroDelRango) {
+              if (!trabajoTachado) {
                 diasPorMes++;
               }
             }
@@ -99,10 +95,10 @@ app.get('/', (req, res) => {
             totalMes,
             totalDia: totalDia.toFixed(2) // Formatear a dos decimales
           };
-        }).filter(ganancia => ganancia.diasPorMes > 0); // Filtrar trabajos sin días de trabajo en el mes seleccionado
+        });
 
         res.render('index', { tareas, trabajos, competiciones, mesSeleccionado, añoSeleccionado, gananciasTrabajos });
-        });
+      });
     });
   });
 });
@@ -116,20 +112,18 @@ app.post('/agregar-tarea', (req, res) => {
     res.redirect('/');
   });
 });
-
 app.post('/agregar-trabajo', (req, res) => {
-  const { descripcion, diasTrabajo, pago, frecuenciaPago, fechaInicio, fechaFin } = req.body;
-  db.run('INSERT INTO trabajos (descripcion, diasTrabajo, pago, frecuenciaPago, fechaInicio, fechaFin) VALUES (?, ?, ?, ?, ?, ?)', [descripcion, diasTrabajo, pago, frecuenciaPago, fechaInicio, fechaFin], (err) => {
+  const { descripcion, fecha } = req.body;
+  db.run('INSERT INTO tareas (descripcion, fecha) VALUES (?, ?)', [descripcion, fecha], (err) => {
     if (err) {
       throw err;
     }
     res.redirect('/');
   });
 });
-
 app.post('/agregar-competicion', (req, res) => {
-  const { descripcion, fechaInicio, fechaFin } = req.body;
-  db.run('INSERT INTO competiciones (descripcion, fechaInicio, fechaFin) VALUES (?, ?, ?)', [descripcion, fechaInicio, fechaFin], (err) => {
+  const { descripcion, fecha } = req.body;
+  db.run('INSERT INTO tareas (descripcion, fecha) VALUES (?, ?)', [descripcion, fecha], (err) => {
     if (err) {
       throw err;
     }
@@ -157,9 +151,59 @@ app.get('/gestion', (req, res) => {
   });
 });
 
+app.post('/actualizar-tarea', (req, res) => {
+  const { id, descripcion, fecha } = req.body;
+  db.run('UPDATE tareas SET descripcion = ?, fecha = ? WHERE id = ?', [descripcion, fecha, id], (err) => {
+    if (err) {
+      throw err;
+    }
+    res.redirect('/gestion');
+  });
+});
+
 app.post('/actualizar-trabajo', (req, res) => {
-  const { id, descripcion, diasTrabajo, pago, frecuenciaPago, fechaInicio, fechaFin } = req.body;
-  db.run('UPDATE trabajos SET descripcion = ?, diasTrabajo = ?, pago = ?, frecuenciaPago = ?, fechaInicio = ?, fechaFin = ? WHERE id = ?', [descripcion, diasTrabajo, pago, frecuenciaPago, fechaInicio, fechaFin, id], (err) => {
+  const { id, descripcion, diasTrabajo, pago, frecuenciaPago } = req.body;
+  db.run('UPDATE trabajos SET descripcion = ?, diasTrabajo = ?, pago = ?, frecuenciaPago = ? WHERE id = ?', [descripcion, diasTrabajo, pago, frecuenciaPago, id], (err) => {
+    if (err) {
+      throw err;
+    }
+    res.redirect('/gestion');
+  });
+});
+
+app.post('/actualizar-competicion', (req, res) => {
+  const { id, descripcion, fechaInicio, fechaFin } = req.body;
+  db.run('UPDATE competiciones SET descripcion = ?, fechaInicio = ?, fechaFin = ? WHERE id = ?', [descripcion, fechaInicio, fechaFin, id], (err) => {
+    if (err) {
+      throw err;
+    }
+    res.redirect('/gestion');
+  });
+});
+
+app.post('/eliminar-tarea', (req, res) => {
+  const { id } = req.body;
+  db.run('DELETE FROM tareas WHERE id = ?', [id], (err) => {
+    if (err) {
+      throw err;
+    }
+    res.redirect('/gestion');
+  });
+});
+
+app.post('/eliminar-trabajo', (req, res) => {
+  const { id } = req.body;
+  db.run('DELETE FROM trabajos WHERE id = ?', [id], (err) => {
+    if (err) {
+      throw err;
+    }
+    res.redirect('/gestion');
+  });
+});
+
+app.post('/eliminar-competicion', (req, res) => {
+  const { id } = req.body;
+  db.run('DELETE FROM competiciones WHERE id = ?', [id], (err) => {
     if (err) {
       throw err;
     }

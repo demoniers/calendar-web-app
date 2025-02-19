@@ -65,44 +65,45 @@ app.get('/', (req, res) => {
         }
 
         // Calcular las ganancias por trabajo y filtrar trabajos sin días de trabajo en el mes seleccionado
-        const gananciasTrabajos = trabajos.map(trabajo => {
-          const diasTrabajo = trabajo.diasTrabajo.split(',').map(d => d.trim().toLowerCase());
-          const diasSemana = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
-          const primerDiaMes = new Date(añoSeleccionado, mesSeleccionado, 1);
-          const ultimoDiaMes = new Date(añoSeleccionado, mesSeleccionado + 1, 0);
+const gananciasTrabajos = trabajos.map(trabajo => {
+  const diasTrabajo = trabajo.diasTrabajo.split(',').map(d => d.trim().toLowerCase());
+  const diasSemana = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+  const primerDiaMes = new Date(añoSeleccionado, mesSeleccionado, 1);
+  const ultimoDiaMes = new Date(añoSeleccionado, mesSeleccionado + 1, 0);
 
-          let diasPorMes = 0;
-          for (let dia = primerDiaMes; dia <= ultimoDiaMes; dia.setDate(dia.getDate() + 1)) {
-            let trabajoTachado = false;
-            if (diasTrabajo.includes(diasSemana[dia.getDay()])) {
-              competiciones.forEach(competicion => {
-                const fechaInicio = new Date(competicion.fechaInicio);
-                const fechaFin = new Date(competicion.fechaFin);
-                if (dia >= fechaInicio && dia <= fechaFin) {
-                  trabajoTachado = true;
-                }
-              });
+  let diasPorMes = 0;
+  for (let dia = primerDiaMes; dia <= ultimoDiaMes; dia.setDate(dia.getDate() + 1)) {
+    let trabajoTachado = false;
+    if (diasTrabajo.includes(diasSemana[dia.getDay()])) {
+      competiciones.forEach(competicion => {
+        const fechaInicio = new Date(competicion.fechaInicio);
+        const fechaFin = new Date(competicion.fechaFin);
+        if (dia >= fechaInicio && dia <= fechaFin) {
+          trabajoTachado = true;
+        }
+      });
 
-              const trabajoDentroDelRango = (!trabajo.fechaInicio || dia >= new Date(trabajo.fechaInicio)) && (!trabajo.fechaFin || dia <= new Date(trabajo.fechaFin));
-              if (!trabajoTachado && trabajoDentroDelRango) {
-                diasPorMes++;
-              }
-            }
-          }
+      const trabajoDentroDelRango = (!trabajo.fechaInicio || dia >= new Date(trabajo.fechaInicio)) && (!trabajo.fechaFin || dia <= new Date(trabajo.fechaFin));
+      if (!trabajoTachado && trabajoDentroDelRango) {
+        diasPorMes++;
+      }
+    }
+  }
 
-          const totalDia = trabajo.frecuenciaPago === 'día' ? trabajo.pago : (trabajo.frecuenciaPago === 'mes' ? trabajo.pago / diasPorMes : 0);
-          const totalMes = totalDia * diasPorMes;
+  const totalDia = trabajo.frecuenciaPago === 'día' ? trabajo.pago : (trabajo.frecuenciaPago === 'mes' ? trabajo.pago / diasPorMes : 0);
+  const totalMes = totalDia * diasPorMes;
 
-          return {
-            nombre: trabajo.descripcion,
-            diasPorMes,
-            totalMes,
-            totalDia: totalDia.toFixed(2) // Formatear a dos decimales
-          };
-        }).filter(ganancia => ganancia.diasPorMes > 0); // Filtrar trabajos sin días de trabajo en el mes seleccionado
+  return {
+    nombre: trabajo.descripcion,
+    diasPorMes,
+    totalMes,
+    totalDia: totalDia.toFixed(2) // Formatear a dos decimales
+  };
+}).filter(ganancia => ganancia.diasPorMes > 0); // Filtrar trabajos sin días de trabajo en el mes seleccionado
 
-        res.render('index', { tareas, trabajos, competiciones, mesSeleccionado, añoSeleccionado, gananciasTrabajos });
-        });
+res.render('index', { tareas, trabajos, competiciones, mesSeleccionado, añoSeleccionado, gananciasTrabajos });
+
+      });
     });
   });
 });
