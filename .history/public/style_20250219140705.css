@@ -64,7 +64,7 @@ tr:nth-child(even) {
 input[type="text"], input[type="date"], input[type="number"], select {
   margin: 10px 0;
   padding: 10px;
-  width: 90%; /* Ancho completo del formulario */
+  width: 75%; /* Ancho completo del formulario */
   border: 1px solid #ff7f50; /* Naranja salmón pálido */
   border-radius: 4px;
   background-color: #001f3f; /* Noche estrellada */
