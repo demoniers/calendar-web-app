@@ -3,9 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <title>Gestión de Tareas, Trabajos y Competiciones</title>
-  <link rel="stylesheet" href="style.css">
+  <link id="estilo" rel="stylesheet" href="/dark-style.css">
 </head>
 <body>
+  <div class="theme-selec">
+    <h1>Selecciona tu hoja de estilo</h1>
+    <select id="selector-estilo" onchange="cambiarEstilo(this.value)">
+        <option value="kity-style.css">Hello Kitty</option>
+        <option value="dark-style.css" selected>Dark Theme</option>
+        <option value="light-style.css">Light Theme</option>
+    </select>
+  </div>
+
+  <script>
+      function cambiarEstilo(nombreEstilo) {
+          document.getElementById("estilo").href = nombreEstilo;
+      }
+  </script>
   <h1>Gestión de Tareas, Trabajos y Competiciones</h1>
 
   <h2>Tareas</h2>
@@ -124,5 +138,18 @@
       <% }) %>
     </tbody>
   </table>
+  
+  <img id="hello-kitty" src="/img/hello-kitty.png" alt="Hello Kitty" class="oculto">
+
+  <script>
+    function cambiarEstilo(nombreEstilo) {
+      document.getElementById("estilo").href = nombreEstilo;
+      if (nombreEstilo === "kity-style.css") {
+        document.getElementById("hello-kitty").classList.remove("oculto");
+      } else {
+        document.getElementById("hello-kitty").classList.add("oculto");
+      }
+    }
+  </script>
 </body>
 </html>

@@ -139,15 +139,15 @@ app.post('/agregar-competicion', (req, res) => {
 
 // VARIABLES DE GESTION
 app.get('/gestion', (req, res) => {
-  db.all('SELECT * FROM tareas', [], (err, tareas) => {
+  db.all('SELECT * FROM tareas ORDER BY fecha ASC', [], (err, tareas) => {
     if (err) {
       throw err;
     }
-    db.all('SELECT * FROM trabajos', [], (err, trabajos) => {
+    db.all('SELECT * FROM trabajos ORDER BY fechaInicio ASC', [], (err, trabajos) => {
       if (err) {
         throw err;
       }
-      db.all('SELECT * FROM competiciones', [], (err, competiciones) => {
+      db.all('SELECT * FROM competiciones ORDER BY fechaInicio ASC', [], (err, competiciones) => {
         if (err) {
           throw err;
         }
