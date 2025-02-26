@@ -1,7 +1,6 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
-
 const app = express();
 const dbPath = path.join(__dirname, 'tareas.db');
 const db = new sqlite3.Database(dbPath);
@@ -108,8 +107,8 @@ app.get('/', (req, res) => {
 });
 
 app.post('/agregar-tarea', (req, res) => {
-  const { descripcion, fecha } = req.body;
-  db.run('INSERT INTO tareas (descripcion, fecha) VALUES (?, ?)', [descripcion, fecha], (err) => {
+  const { descripcion, fecha, horaInicio, horaFin } = req.body;
+  db.run('INSERT INTO tareas (descripcion, fecha, horaInicio, horaFin) VALUES (?, ?, ?, ?)', [descripcion, fecha, horaInicio, horaFin], (err) => {
     if (err) {
       throw err;
     }
@@ -118,8 +117,8 @@ app.post('/agregar-tarea', (req, res) => {
 });
 
 app.post('/agregar-trabajo', (req, res) => {
-  const { descripcion, diasTrabajo, pago, frecuenciaPago, fechaInicio, fechaFin } = req.body;
-  db.run('INSERT INTO trabajos (descripcion, diasTrabajo, pago, frecuenciaPago, fechaInicio, fechaFin) VALUES (?, ?, ?, ?, ?, ?)', [descripcion, diasTrabajo, pago, frecuenciaPago, fechaInicio, fechaFin], (err) => {
+  const { descripcion, diasTrabajo, pago, frecuenciaPago,  horaInicio, horaFin, fechaInicio, fechaFin } = req.body;
+  db.run('INSERT INTO trabajos (descripcion, diasTrabajo, pago, frecuenciaPago,  horaInicio, horaFin, fechaInicio, fechaFin) VALUES (?, ?, ?, ?, ?, ?)', [descripcion, diasTrabajo, pago, frecuenciaPago,  horaInicio, horaFin, fechaInicio, fechaFin], (err) => {
     if (err) {
       throw err;
     }
@@ -129,7 +128,7 @@ app.post('/agregar-trabajo', (req, res) => {
 
 app.post('/agregar-competicion', (req, res) => {
   const { descripcion, fechaInicio, fechaFin } = req.body;
-  db.run('INSERT INTO competiciones (descripcion, fechaInicio, fechaFin) VALUES (?, ?, ?)', [descripcion, fechaInicio, fechaFin], (err) => {
+  db.run('INSERT INTO competiciones (descripcion, fechaInicio, fechaFin) VALUES (?, ?, ?)', [descripcion, fechaInicio, fechaFin ], (err) => {
     if (err) {
       throw err;
     }
@@ -157,18 +156,21 @@ app.get('/gestion', (req, res) => {
   });
 });
 
+
+
 app.post('/actualizar-tarea', (req, res) => {
-  const { id, descripcion, fecha } = req.body;
-  db.run('UPDATE tareas SET descripcion = ?, fecha = ? WHERE id = ?', [descripcion, fecha, id], (err) => {
+  const { id, descripcion, fecha, horaInicio, horaFin } = req.body;
+  db.run('UPDATE tareas SET descripcion = ?, fecha = ?, horaInicio = ?, horaFin = ? WHERE id = ?', [descripcion, fecha, horaInicio, horaFin, id], (err) => {
     if (err) {
       throw err;
     }
     res.redirect('/gestion');
   });
 });
+
 app.post('/actualizar-trabajo', (req, res) => {
-  const { id, descripcion, diasTrabajo, pago, frecuenciaPago, fechaInicio, fechaFin } = req.body;
-  db.run('UPDATE trabajos SET descripcion = ?, diasTrabajo = ?, pago = ?, frecuenciaPago = ?, fechaInicio = ?, fechaFin = ? WHERE id = ?', [descripcion, diasTrabajo, pago, frecuenciaPago, fechaInicio, fechaFin, id], (err) => {
+  const { id, descripcion, diasTrabajo, pago, frecuenciaPago, horaInicio, horaFin, fechaInicio, fechaFin } = req.body;
+  db.run('UPDATE trabajos SET descripcion = ?, diasTrabajo = ?, pago = ?, frecuenciaPago = ?, horaInicio = ?, horaFin = ?, fechaInicio = ?, fechaFin = ? WHERE id = ?', [descripcion, diasTrabajo, pago, frecuenciaPago, horaInicio, horaFin, fechaInicio, fechaFin, id], (err) => {
     if (err) {
       throw err;
     }

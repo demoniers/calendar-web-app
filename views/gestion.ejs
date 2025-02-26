@@ -26,23 +26,31 @@
   <table>
     <thead>
       <tr>
-        <th>ID</th>
+        <th></th>
         <th>Descripción</th>
         <th>Fecha</th>
+        <th>Hora de Inicio</th>
+        <th>Hora de Fin</th>
         <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
-      <% tareas.forEach(tarea => { %>
+      <%
+      const hoy = new Date(); 
+      tareas.forEach(tarea => { %>
       <tr>
         <td><%= tarea.id %></td>
         <td><%= tarea.descripcion %></td>
+        <td><%= tarea.horaInicio %></td>
+        <td><%= tarea.horaFin %></td>
         <td><%= tarea.fecha %></td>
         <td>
           <form action="/actualizar-tarea" method="post" style="display:inline;">
             <input type="hidden" name="id" value="<%= tarea.id %>">
             <input type="text" name="descripcion" value="<%= tarea.descripcion %>">
             <input type="date" name="fecha" value="<%= tarea.fecha %>">
+            <input type="time" name="horaInicio" value="<%= tarea.horaInicio %>">
+            <input type="time" name="horaFin" value="<%= tarea.horaFin %>">
             <button type="submit">Actualizar</button>
           </form>
           <form action="/eliminar-tarea" method="post" style="display:inline;">
@@ -64,6 +72,8 @@
         <th>Días de Trabajo</th>
         <th>Pago</th>
         <th>Frecuencia de Pago</th>
+        <th>Hora de Inicio</th>
+        <th>Hora de Fin</th>
         <th>Fecha de Inicio</th>
         <th>Fecha de Fin</th>
         <th>Acciones</th>
@@ -77,6 +87,8 @@
         <td><%= trabajo.diasTrabajo %></td>
         <td><%= trabajo.pago %></td>
         <td><%= trabajo.frecuenciaPago %></td>
+        <td><%= trabajo.horaInicio %></td>
+        <td><%= trabajo.horaFin %></td>
         <td><%= trabajo.fechaInicio %></td>
         <td><%= trabajo.fechaFin %></td>
         <td>
@@ -91,6 +103,8 @@
             </select>
             <input type="date" name="fechaInicio" value="<%= trabajo.fechaInicio %>">
             <input type="date" name="fechaFin" value="<%= trabajo.fechaFin %>">
+            <input type="time" name="horaInicio" value="<%= trabajo.horaInicio %>">
+            <input type="time" name="horaFin" value="<%= trabajo.horaFin %>">
             <button type="submit">Actualizar</button>
           </form>
           <form action="/eliminar-trabajo" method="post" style="display:inline;">
